@@ -53,7 +53,7 @@ func (e *spectatorExporter) ConsumeMetrics(_ context.Context, md pdata.Metrics) 
 }
 
 func (e *spectatorExporter) Start(ctx context.Context, host component.Host) error {
-	return nil
+	return e.cache.Start()
 }
 
 // Shutdown stops the exporter and is invoked during shutdown.
