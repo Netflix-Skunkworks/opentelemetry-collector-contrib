@@ -48,6 +48,8 @@ const (
 
 	// SubmatchCaseFieldName is the mapstructure field name for SubmatchCase field
 	SubmatchCaseFieldName = "submatch_case"
+
+	ScaleArgumentFieldName = "scale_argument"
 )
 
 // Config defines configuration for Resource processor.
@@ -124,6 +126,8 @@ type Operation struct {
 
 	// LabelValue identifies the exact label value to operate on
 	LabelValue string `mapstructure:"label_value"`
+
+	ScaleArgument string `mapstructure:"scale_argument"`
 }
 
 // ValueAction renames label values.
@@ -204,6 +208,9 @@ type AggregationType string
 const (
 	// Sum indicates taking the sum of the aggregated data.
 	Sum AggregationType = "sum"
+
+	// ScaleValue scales the value of a metric
+	ScaleValue OperationAction = "scale_value"
 
 	// Mean indicates taking the mean of the aggregated data.
 	Mean AggregationType = "mean"

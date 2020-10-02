@@ -15,6 +15,7 @@ const (
 
 var specTypeMapping = map[metricspb.MetricDescriptor_Type]string{
 	metricspb.MetricDescriptor_CUMULATIVE_DOUBLE: "C",
+	metricspb.MetricDescriptor_GAUGE_DOUBLE: "g",
 }
 
 type Adapter struct {
@@ -41,6 +42,8 @@ func (s *Adapter) UpdateTimeSeries(descriptor *metricspb.MetricDescriptor, serie
 	switch descriptor.GetType() {
 	case metricspb.MetricDescriptor_CUMULATIVE_DOUBLE:
 		return s.updateMonotonicCounter(descriptor, series)
+	case metricspb.MetricDescriptor_GAUGE_DOUBLE:
+		return s.updateGauge(descriptor, series)
 	default:
 		return fmt.Errorf("dropping metric of unexpected type %s:%s", descriptor.GetName(), descriptor.Type)
 	}
@@ -60,6 +63,36 @@ func (s *Adapter) updateMonotonicCounter(descriptor *metricspb.MetricDescriptor,
 	spectatordMsg, err := formatSpectatordMessage(
 		defaultSpecatordProtocol,
 		specTypeMapping[metricspb.MetricDescriptor_CUMULATIVE_DOUBLE],
+		metricName,
+		tags,
+		strconv.FormatFloat(newCount, 'f', 2, 64))
+
+	if err != nil {
+		return fmt.Errorf("failed to format spectatord message: %v", err)
+	} else {
+		s.log.Info(fmt.Sprintf("writing to spectatord: %s", spectatordMsg))
+		if _, err := s.conn.Write([]byte(spectatordMsg)); err != nil {
+			return fmt.Errorf("failed to write spectatord message to socket: %v", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *Adapter) updateGauge(descriptor *metricspb.MetricDescriptor, series *metricspb.TimeSeries) error {
+	metricName := descriptor.GetName()
+
+	if len(series.Points) != 1 {
+		return fmt.Errorf("skipping update, unexpected number of points in gauge metric: %d", len(series.Points))
+	}
+
+	tags := s.getTags(descriptor.GetLabelKeys(), series.GetLabelValues())
+	s.log.Debug(fmt.Sprintf("tags: %+v", tags))
+
+	newCount := series.Points[0].GetDoubleValue()
+	spectatordMsg, err := formatSpectatordMessage(
+		defaultSpecatordProtocol,
+		specTypeMapping[metricspb.MetricDescriptor_GAUGE_DOUBLE],
 		metricName,
 		tags,
 		strconv.FormatFloat(newCount, 'f', 2, 64))

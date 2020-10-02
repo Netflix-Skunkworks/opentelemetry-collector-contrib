@@ -61,7 +61,7 @@ transforms:
     # operations contain a list of operations that will be performed on the selected metrics
     operations:
         # action defines the type of operation that will be performed, see examples below for more details
-      - action: {add_label, update_label, delete_label_value, toggle_scalar_data_type, aggregate_labels, aggregate_label_values}
+      - action: {add_label, update_label, delete_label_value, toggle_scalar_data_type, aggregate_labels, aggregate_label_values, scale_value}
         # label specifies the label to operate on
         label: <label>
         # new_label specifies the updated name of the label; if action is add_label, new_label is required
@@ -76,6 +76,8 @@ transforms:
         label_set: [labels...]
         # aggregation_type defines how data points will be aggregated; if action is aggregate_labels or aggregate_label_values, aggregation_type is required
         aggregation_type: {sum, mean, min, max}
+        # scale_argument defines how much to scale a metric's value by; if action is scale_value scale_argument is required
+        scale_argument: <float>
         # value_actions contain a list of operations that will be performed on the selected label
         value_actions:
             # value specifies the value to operate on
