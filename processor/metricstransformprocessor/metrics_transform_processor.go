@@ -110,6 +110,8 @@ func (mtp *metricsTransformProcessor) update(metric *metricspb.Metric, transform
 			mtp.addLabelOp(metric, op)
 		case DeleteLabelValue:
 			mtp.deleteLabelValueOp(metric, op)
+		case ScaleValue:
+			mtp.scaleValue(metric, op)
 		}
 	}
 }
@@ -153,3 +155,4 @@ func (mtp *metricsTransformProcessor) compareTimestamps(t1 *timestamppb.Timestam
 
 	return t1.Seconds < t2.Seconds || (t1.Seconds == t2.Seconds && t1.Nanos < t2.Nanos)
 }
+

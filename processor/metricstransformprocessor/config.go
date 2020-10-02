@@ -34,6 +34,8 @@ const (
 
 	// NewValueFieldName is the mapstructure field name for NewValue field
 	NewValueFieldName = "new_value"
+
+	ScaleArgumentFieldName = "scale_argument"
 )
 
 // Config defines configuration for Resource processor.
@@ -91,6 +93,8 @@ type Operation struct {
 
 	// LabelValue identifies the exact label value to operate on
 	LabelValue string `mapstructure:"label_value"`
+
+	ScaleArgument string `mapstructure:"scale_argument"`
 }
 
 // ValueAction renames label values.
@@ -137,6 +141,9 @@ const (
 
 	// DeleteLabelValue deletes a label value by also removing all the points associated with this label value
 	DeleteLabelValue OperationAction = "delete_label_value"
+
+	// ScaleValue scales the value of a metric
+	ScaleValue OperationAction = "scale_value"
 
 	// Mean indicates taking the mean of the aggregated data.
 	Mean AggregationType = "mean"

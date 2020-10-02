@@ -55,6 +55,15 @@ transforms:
       aggregated_values: [values...]
       new_value: <new_value> 
       aggregation_type: {sum, mean, max}
+
+
+    # scale and rename a metric.  Only metrics that are double valued may be scaled.
+      - metric_name: cgroup:cpusched:shares
+        action: update
+        new_name: cgroup.cpu.processingCapacity
+        operations:
+          - action: scale_value
+            scale_argument: 0.0009765625 # 1/1024
 ```
 
 ## Examples
