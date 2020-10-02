@@ -82,6 +82,13 @@ transforms:
           - value: <current_label_value>
             # new_value specifies the updated value
             new_value: <new_label_value>
+        # scale and rename a metric.  Only metrics that are double valued may be scaled.
+        - metric_name: cgroup:cpusched:shares
+          action: update
+          new_name: cgroup.cpu.processingCapacity
+          operations:
+            - action: scale_value
+              scale_argument: 0.0009765625 # 1/1024
 ```
 
 ## Examples
