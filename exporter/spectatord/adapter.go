@@ -70,7 +70,7 @@ func (s *Adapter) updateMonotonicCounter(descriptor *metricspb.MetricDescriptor,
 	if err != nil {
 		return fmt.Errorf("failed to format spectatord message: %v", err)
 	} else {
-		s.log.Info(fmt.Sprintf("writing to spectatord: %s", spectatordMsg))
+		s.log.Debug(fmt.Sprintf("writing to spectatord: %s", spectatordMsg))
 		if _, err := s.conn.Write([]byte(spectatordMsg)); err != nil {
 			return fmt.Errorf("failed to write spectatord message to socket: %v", err)
 		}
