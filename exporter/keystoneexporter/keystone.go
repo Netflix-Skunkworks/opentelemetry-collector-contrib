@@ -14,11 +14,12 @@ import (
 )
 
 var (
-	NilKsEvent   = KsEvent{}
-	NilKsMessage = KsMessage{}
-	hostname     = ""
-	ksClient *http.Client     = nil
-	ksGatewayURL = ""
+	ksClient     *http.Client = nil
+	NilKsMessage              = KsMessage{}
+	hostname                  = "unknown_hostname"
+	stack                     = "unknown_stack"
+	instanceId                = "unknown_instance_id"
+	ksGatewayURL              = "unknown_gateway_url"
 )
 
 func init() {
@@ -27,6 +28,18 @@ func init() {
 		hostname = "unknown_hostname"
 	} else {
 		hostname = hname
+	}
+
+	if localStack, ok := os.LookupEnv("NETFLIX_STACK"); ok {
+		stack = localStack
+	} else {
+		panic("NETFLIX_STACK not present in environment")
+	}
+
+	if localInstanceId, ok := os.LookupEnv("EC2_INSTANCE_ID"); ok {
+		instanceId = localInstanceId
+	} else {
+		panic("EC2_INSTANCE_ID not present in environment")
 	}
 
 	ksClient = &http.Client{
@@ -39,15 +52,21 @@ func init() {
 }
 
 type KsEvent struct {
-	UUID    string `json:"uuid"`
-	Payload metricspb.Metric `json:"payload"`
+	UUID    string    `json:"uuid"`
+	Payload KsPayload `json:"payload"`
 }
 
 type KsMessage struct {
-	AppName string `json:"appName"`
-	Hostname string `json:"hostname"`
-	Ack bool `json:"ack"`
-	Events []KsEvent `json:"event"`
+	AppName  string    `json:"appName"`
+	Hostname string    `json:"hostname"`
+	Ack      bool      `json:"ack"`
+	Events   []KsEvent `json:"event"`
+}
+
+type KsPayload struct {
+	Ec2InstanceId string           `json:"ec2_instance_id"`
+	NflxStack     string           `json:"stack"`
+	Metric        metricspb.Metric `json:"metric"`
 }
 
 func GetEvent(metric *metricspb.Metric) (KsEvent, error) {
@@ -63,8 +82,12 @@ func GetEvent(metric *metricspb.Metric) (KsEvent, error) {
 	// }
 
 	return KsEvent{
-		UUID:    uuid.New().String(),
-		Payload: *metric,
+		UUID: uuid.New().String(),
+		Payload: KsPayload{
+			Ec2InstanceId: instanceId,
+			NflxStack:     stack,
+			Metric:        *metric,
+		},
 	}, nil
 }
 
@@ -127,4 +150,3 @@ func GetKsGatewayUrl() (string, error) {
 	// "https://ksgateway-${REGION}.${ENV}.netflix.net/REST/v1/stream/${STREAM_NAME}"
 	return fmt.Sprintf("http://ksgateway-%s.%s.netflix.net/REST/v1/stream/%s", region, env, streamName), nil
 }
-
