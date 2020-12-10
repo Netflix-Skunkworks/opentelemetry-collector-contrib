@@ -121,7 +121,8 @@ func formatSpectatordMessage(protocol, metricType, name string, tags map[string]
 	metricType = strings.Replace(metricType, ":", "_", -1)
 	name = strings.Replace(name, ":", "_", -1)
 	specTags = strings.Replace(specTags, ":", "_", -1)
-	return fmt.Sprintf("%s:%s:%s:#%s:%s", protocol, metricType, name, specTags, value), nil
+	// metric-type:name,tags:value@timestamp
+	return fmt.Sprintf("%s:%s,%s:%s", metricType, name, specTags, value), nil
 }
 
 func map2SpectatordTags(tags map[string]string) (string, error) {

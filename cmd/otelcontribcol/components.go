@@ -16,7 +16,8 @@ package main
 
 import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/keystoneexporter"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/tituskubeletspectatorexporter"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/simplespectatordexporter"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/tituskubeletspectatordexporter"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/component/componenterror"
 	"go.opentelemetry.io/collector/service/defaultcomponents"
@@ -117,8 +118,9 @@ func components() (component.Factories, error) {
 		elasticexporter.NewFactory(),
 		alibabacloudlogserviceexporter.NewFactory(),
 		sentryexporter.NewFactory(),
-		tituskubeletspectatorexporter.NewFactory(),
+		tituskubeletspectatordexporter.NewFactory(),
 		keystoneexporter.NewFactory(),
+		simplespectatordexporter.NewFactory(),
 	}
 	for _, exp := range factories.Exporters {
 		exporters = append(exporters, exp)
