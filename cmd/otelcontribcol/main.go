@@ -20,6 +20,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
+	_ "net/http/pprof"
 
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/service"
@@ -32,6 +34,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to build components: %v", err)
 	}
+
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 
 	info := component.ApplicationStartInfo{
 		ExeName:  "otelcontribcol",

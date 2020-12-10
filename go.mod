@@ -8,6 +8,8 @@ require (
 	github.com/client9/misspell v0.3.4
 	github.com/golangci/golangci-lint v1.33.0
 	github.com/google/addlicense v0.0.0-20200906110928-a0294312aa76
+	github.com/google/uuid v1.1.2
+	github.com/hashicorp/go-multierror v1.1.0
 	github.com/jstemmer/go-junit-report v0.9.1
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/alibabacloudlogserviceexporter v0.0.0-00010101000000-000000000000
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/awsemfexporter v0.0.0-00010101000000-000000000000
@@ -65,6 +67,8 @@ require (
 	go.opentelemetry.io/collector v0.16.1-0.20201207152538-326931de8c32
 	go.opentelemetry.io/collector/cmd/issuegenerator v0.0.0-20201201185019-f4f68db25d1f
 	go.opentelemetry.io/collector/cmd/mdatagen v0.0.0-20201201185019-f4f68db25d1f
+	go.uber.org/multierr v1.6.0
+	go.uber.org/zap v1.16.0
 	golang.org/x/sys v0.0.0-20201113233024-12cec1faf1ba
 	honnef.co/go/tools v0.0.1-2020.1.6
 )
