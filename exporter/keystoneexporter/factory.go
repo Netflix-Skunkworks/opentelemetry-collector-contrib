@@ -9,11 +9,9 @@ import (
 )
 
 const (
-	// The value of "type" key in configuration.
 	typeStr = "keystone"
 )
 
-// NewFactory creates a factory for Logging exporter
 func NewFactory() component.ExporterFactory {
 	return exporterhelper.NewFactory(
 		typeStr,

@@ -1,4 +1,4 @@
-package tituskubeletspectatorexporter
+package tituskubeletspectatordexporter
 
 import (
 	"io/ioutil"
@@ -17,4 +17,3 @@ func GetNetworkNamespacePath(podName string) (string, error) {
 		return string(content), nil
 	}
 }
-
