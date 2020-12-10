@@ -1,4 +1,4 @@
-package tituskubeletspectatorexporter
+package tituskubeletspectatordexporter
 
 import (
 	"context"

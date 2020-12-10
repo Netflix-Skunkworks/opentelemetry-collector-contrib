@@ -1,4 +1,4 @@
-package keystoneexporter
+package tituskubeletspectatordexporter
 
 import (
 	"go.opentelemetry.io/collector/config/configmodels"
