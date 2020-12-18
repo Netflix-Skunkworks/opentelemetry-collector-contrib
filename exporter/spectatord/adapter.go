@@ -46,7 +46,7 @@ func (s *Adapter) UpdateTimeSeries(descriptor *metricspb.MetricDescriptor, serie
 	case metricspb.MetricDescriptor_GAUGE_DOUBLE:
 		return s.updateGauge(descriptor, series)
 	default:
-		log.Warnf("dropping metric of unexpected type %s:%s", descriptor.GetName(), descriptor.Type)
+		log.Debugf("dropping metric of unexpected type %s:%s", descriptor.GetName(), descriptor.Type)
 		return nil
 	}
 }
