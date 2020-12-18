@@ -3,6 +3,7 @@ package spectatord
 import (
 	"fmt"
 	metricspb "github.com/census-instrumentation/opencensus-proto/gen-go/metrics/v1"
+	"github.com/labstack/gommon/log"
 	"net"
 	"go.uber.org/zap"
 	"strconv"
@@ -45,7 +46,8 @@ func (s *Adapter) UpdateTimeSeries(descriptor *metricspb.MetricDescriptor, serie
 	case metricspb.MetricDescriptor_GAUGE_DOUBLE:
 		return s.updateGauge(descriptor, series)
 	default:
-		return fmt.Errorf("dropping metric of unexpected type %s:%s", descriptor.GetName(), descriptor.Type)
+		log.Warnf("dropping metric of unexpected type %s:%s", descriptor.GetName(), descriptor.Type)
+		return nil
 	}
 }
 
