@@ -188,9 +188,12 @@ const (
 	// AggregateLabelValues aggregates away the values in Operation.AggregatedValues
 	// by the method indicated by Operation.AggregationType.
 	AggregateLabelValues OperationAction = "aggregate_label_values"
+
+	// ScaleValue scales the value of a metric
+	ScaleValue OperationAction = "scale_value"
 )
 
-var OperationActions = []OperationAction{AddLabel, UpdateLabel, DeleteLabelValue, ToggleScalarDataType, AggregateLabels, AggregateLabelValues}
+var OperationActions = []OperationAction{AddLabel, UpdateLabel, DeleteLabelValue, ToggleScalarDataType, AggregateLabels, AggregateLabelValues, ScaleValue}
 
 func (oa OperationAction) isValid() bool {
 	for _, operationAction := range OperationActions {
@@ -208,9 +211,6 @@ type AggregationType string
 const (
 	// Sum indicates taking the sum of the aggregated data.
 	Sum AggregationType = "sum"
-
-	// ScaleValue scales the value of a metric
-	ScaleValue OperationAction = "scale_value"
 
 	// Mean indicates taking the mean of the aggregated data.
 	Mean AggregationType = "mean"
