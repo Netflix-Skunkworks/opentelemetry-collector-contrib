@@ -2,6 +2,7 @@ package keystoneexporter
 
 import (
 	"context"
+	metricspb "github.com/census-instrumentation/opencensus-proto/gen-go/metrics/v1"
 
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/consumer/pdata"
@@ -37,7 +38,7 @@ func (k keystoneExporter) ConsumeMetrics(ctx context.Context, md pdata.Metrics) 
 	return nil
 }
 
-func (k keystoneExporter) getMessage(md pdata.Metrics) (KsMessage, error) {
+func (k keystoneExporter) getMessage(md pdata.Metrics) (*KsMessage, error) {
 	events := make([]KsEvent, 0)
 
 	ocmds := internaldata.MetricsToOC(md)
@@ -45,8 +46,18 @@ func (k keystoneExporter) getMessage(md pdata.Metrics) (KsMessage, error) {
 	for _, ocmd := range ocmds {
 		k.log.Debug("constructing keystone message for metrics", zap.Int("count", len(ocmd.Metrics)))
 		for _, metric := range ocmd.Metrics {
-			if event, err := GetEvent(metric); err == nil {
-				events = append(events, event)
+			if metric.MetricDescriptor == nil {
+				k.log.Error("no metric descriptor present")
+				continue
+			}
+
+			if !isValidMetricType(metric.MetricDescriptor.Type) {
+				k.log.Error("invalid type", zap.String("metric", metric.MetricDescriptor.Name), zap.String("type", metric.MetricDescriptor.Type.String()))
+				continue
+			}
+
+			if evts, err := GetEvents(metric); err == nil {
+				events = append(events, evts...)
 			} else {
 				k.log.Error("failed to construct event from metric", zap.String("name", metric.GetMetricDescriptor().Name))
 			}
@@ -54,4 +65,15 @@ func (k keystoneExporter) getMessage(md pdata.Metrics) (KsMessage, error) {
 	}
 
 	return GetMessage(events)
+}
+
+func isValidMetricType(metricType metricspb.MetricDescriptor_Type) bool {
+	switch metricType {
+	case
+		metricspb.MetricDescriptor_CUMULATIVE_DOUBLE,
+		metricspb.MetricDescriptor_GAUGE_DOUBLE:
+		return true
+	default:
+		return false
+	}
 }
