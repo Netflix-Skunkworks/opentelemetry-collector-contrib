@@ -161,7 +161,7 @@ func PublishMessage(msg *KsMessage) error {
 func GetKsGatewayUrl() (string, error) {
 	const regionKey = "EC2_REGION"
 	const envKey = "NETFLIX_ENVIRONMENT"
-	const streamName = "titus_container_system_metrics"
+	const streamNameFmt = "titus_metrics_%s"
 
 	region, ok := os.LookupEnv(regionKey)
 	if !ok {
@@ -173,8 +173,10 @@ func GetKsGatewayUrl() (string, error) {
 		return "", fmt.Errorf("failed to lookup envvar: %s", envKey)
 	}
 
-	// "https://ksgateway-${REGION}.${ENV}.netflix.net/REST/v1/stream/${STREAM_NAME}"
-	return fmt.Sprintf("http://ksgateway-%s.%s.netflix.net/REST/v1/stream/%s", region, env, streamName), nil
+	streamName := fmt.Sprintf(streamNameFmt, env)
+
+	// "https://ksgateway-${REGION}.prod.netflix.net/REST/v1/stream/${STREAM_NAME}"
+	return fmt.Sprintf("http://ksgateway-%s.prod.netflix.net/REST/v1/stream/%s", region, streamName), nil
 }
 
 func getPayload(descriptor *metricspb.MetricDescriptor, series *metricspb.TimeSeries) (*KsPayload, error) {
