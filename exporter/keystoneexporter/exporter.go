@@ -23,22 +23,10 @@ func (k keystoneExporter) Shutdown(ctx context.Context) error {
 }
 
 func (k keystoneExporter) ConsumeMetrics(ctx context.Context, md pdata.Metrics) error {
-	msg, err := k.getMessage(md)
-	if err != nil {
-		k.log.Error("failed to construct message", zap.Error(err))
-		return err
-	}
-
-	err = PublishMessage(msg)
-	if err != nil {
-		k.log.Error("failed to publish message", zap.Error(err))
-		return err
-	}
-
-	return nil
+	return k.publishMessages(md)
 }
 
-func (k keystoneExporter) getMessage(md pdata.Metrics) (*KsMessage, error) {
+func (k keystoneExporter) publishMessages(md pdata.Metrics) (error) {
 	events := make([]KsEvent, 0)
 
 	ocmds := internaldata.MetricsToOC(md)
@@ -64,7 +52,7 @@ func (k keystoneExporter) getMessage(md pdata.Metrics) (*KsMessage, error) {
 		}
 	}
 
-	return GetMessage(events)
+	return PublishMessages(events)
 }
 
 func isValidMetricType(metricType metricspb.MetricDescriptor_Type) bool {
