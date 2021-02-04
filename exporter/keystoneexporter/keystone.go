@@ -22,6 +22,11 @@ var (
 	ksGatewayURL              = "unknown_gateway_url"
 )
 
+const (
+	maxMessageSizeBytes = 9000000
+	maxEventCount       = 16000
+)
+
 func init() {
 	hname, err := os.Hostname()
 	if err != nil {
@@ -114,25 +119,75 @@ func GetEvents(metric *metricspb.Metric) ([]KsEvent, error) {
 
 	return events, nil
 }
-func GetMessage(events []KsEvent) (*KsMessage, error) {
+
+func PublishMessages(events []KsEvent) error {
+	for {
+		head, tail := chunkEvents(events)
+		if err := publishMessages(head); err != nil {
+			return err
+		}
+
+		if len(tail) == 0 {
+			return nil
+		}
+
+		events = tail
+	}
+}
+
+func chunkEvents(events []KsEvent) ([]KsEvent, []KsEvent) {
+	if len(events) <= maxEventCount {
+		return events, []KsEvent{}
+	} else {
+		return events[:maxEventCount], events[maxEventCount:]
+	}
+}
+
+func publishMessages(events []KsEvent) error {
 	if events == nil || len(events) == 0 {
-		return nil, fmt.Errorf("no events provided for construction of message")
+		return fmt.Errorf("no events provided for construction of message")
 	}
 
-	return &KsMessage{
+	msg := KsMessage{
 		AppName:  "otel-contrib-collector.service",
 		Hostname: hostname,
 		Ack:      false,
 		Events:   events,
-	}, nil
-}
-
-func PublishMessage(msg *KsMessage) error {
-	b, err := json.Marshal(*msg)
-	if err != nil {
-		return err
 	}
 
+	b, err := json.Marshal(msg)
+	if err != nil {
+		return fmt.Errorf("failed to marshal message for size measurement")
+	}
+
+	msgSize := len(b)
+
+	// If the message is small enough return it.
+	if msgSize < maxMessageSizeBytes {
+		if err := publishMessage(b); err != nil {
+			log.Errorf("failed to publish message with error: %s", err)
+			return err
+		}
+		log.Debugf("single message size: %d", msgSize)
+		return nil
+	}
+
+	log.Infof("splitting message of size: %d", msgSize)
+
+	// If the message is too big split it
+	midPoint := len(events) / 2
+	if err := publishMessages(events[:midPoint]); err != nil {
+		return fmt.Errorf("failed to get left side of split message")
+	}
+
+	if err := publishMessages(events[midPoint:]); err != nil {
+		return fmt.Errorf("failed to get right side of split message")
+	}
+
+	return nil
+}
+
+func publishMessage(b []byte) error {
 	log.Debugf("publishing keystone message: %s", string(b))
 
 	httpResponse, err := ksClient.Post(ksGatewayURL, "application/json", bytes.NewReader(b))
@@ -141,6 +196,7 @@ func PublishMessage(msg *KsMessage) error {
 	}
 
 	if httpResponse.StatusCode == http.StatusOK && err == nil {
+		log.Debugf("published keystone message with size: %d", len(b))
 		return nil
 	}
 
