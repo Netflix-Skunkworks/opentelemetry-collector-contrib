@@ -25,11 +25,13 @@ func createDefaultConfig() configmodels.Exporter {
 			TypeVal: typeStr,
 			NameVal: typeStr,
 		},
+		KeystoneUrlFormat: "ksgateway-titus-metrics-%s.prod.netflix.net",
 	}
 }
 
-func createMetricsExporter(_ context.Context, params component.ExporterCreateParams, _ configmodels.Exporter) (component.MetricsExporter, error) {
+func createMetricsExporter(_ context.Context, params component.ExporterCreateParams, config configmodels.Exporter) (component.MetricsExporter, error) {
 	return &keystoneExporter{
 		log: params.Logger,
+		config: config.(*Config),
 	}, nil
 }

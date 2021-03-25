@@ -51,9 +51,16 @@ func init() {
 		Timeout: 1 * time.Second,
 	}
 
-	if ksGatewayURL, err = GetKsGatewayUrl(); err != nil {
-		panic(err)
+}
+
+func start(config *Config) error {
+	url, err := GetKsGatewayUrl(config)
+	if err != nil {
+		return err
 	}
+
+	ksGatewayURL = url
+	return nil
 }
 
 type KsEvent struct {
@@ -214,7 +221,7 @@ func publishMessage(b []byte) error {
 		ksGatewayURL, httpResponse.StatusCode, string(bodyBytes))
 }
 
-func GetKsGatewayUrl() (string, error) {
+func GetKsGatewayUrl(config *Config) (string, error) {
 	const regionKey = "EC2_REGION"
 	const envKey = "NETFLIX_ENVIRONMENT"
 	const streamNameFmt = "titus_metrics_%s"
@@ -231,8 +238,9 @@ func GetKsGatewayUrl() (string, error) {
 
 	streamName := fmt.Sprintf(streamNameFmt, env)
 
-	// "https://ksgateway-${REGION}.prod.netflix.net/REST/v1/stream/${STREAM_NAME}"
-	return fmt.Sprintf("http://ksgateway-%s.prod.netflix.net/REST/v1/stream/%s", region, streamName), nil
+	// "https://ksgateway-titus-metrics-${REGION}.prod.netflix.net/REST/v1/stream/${STREAM_NAME}"
+	host := fmt.Sprintf(config.KeystoneUrlFormat, region)
+	return fmt.Sprintf("http://%s/REST/v1/stream/%s", host, streamName), nil
 }
 
 func getPayload(descriptor *metricspb.MetricDescriptor, series *metricspb.TimeSeries) (*KsPayload, error) {
