@@ -12,9 +12,16 @@ import (
 
 type keystoneExporter struct {
 	log *zap.Logger
+	config *Config
 }
 
 func (k keystoneExporter) Start(ctx context.Context, host component.Host) error {
+	err := start(k.config)
+	if err != nil {
+		k.log.Error("failed to start keystone exporter", zap.Error(err))
+	}
+
+	k.log.Info("Keystone gateway url", zap.String("url", ksGatewayURL))
 	return nil
 }
 
