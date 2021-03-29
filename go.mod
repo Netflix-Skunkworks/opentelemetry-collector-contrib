@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/client9/misspell v0.3.4
-	github.com/golangci/golangci-lint v1.31.0
+	github.com/golangci/golangci-lint v1.39.0
 	github.com/google/addlicense v0.0.0-20200622132530-df58acafd6d5
 	github.com/jstemmer/go-junit-report v0.9.1
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/alibabacloudlogserviceexporter v0.0.0-00010101000000-000000000000
@@ -43,11 +43,11 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/statsdreceiver v0.0.0-00010101000000-000000000000
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/wavefrontreceiver v0.0.0-00010101000000-000000000000
 	github.com/pavius/impi v0.0.3
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/tcnksm/ghr v0.13.0
 	go.opentelemetry.io/collector v0.10.1-0.20200922190504-eb2127131b29
-	golang.org/x/sys v0.0.0-20200905004654-be1d3432aa8f
-	honnef.co/go/tools v0.0.1-2020.1.5
+	golang.org/x/sys v0.0.0-20210228012217-479acdf4ea46
+	honnef.co/go/tools v0.1.3
 )
 
 // Replace references to modules that are in this repository with their relateive paths
