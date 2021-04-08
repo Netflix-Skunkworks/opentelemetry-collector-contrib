@@ -22,12 +22,24 @@ import (
 func (mtp *metricsTransformProcessor) updateLabelOp(metric *metricspb.Metric, mtpOp internalOperation) {
 	op := mtpOp.configOperation
 	for idx, label := range metric.MetricDescriptor.LabelKeys {
-		if label.Key != op.Label {
+		newLabel := ""
+		if label.Key == op.Label {
+			// Old label rename method
+			newLabel = op.NewLabel
+		} else if mtpOp.labelKeyRegex != nil {
+			// Regex based label rename
+			if matches := mtpOp.labelKeyRegex.FindStringSubmatchIndex(label.Key); matches != nil {
+				newLabel = string(mtpOp.labelKeyRegex.ExpandString([]byte{}, op.NewLabel, label.Key, matches))
+			} else {
+				continue
+			}
+		} else {
+			// No renaming method present
 			continue
 		}
 
-		if op.NewLabel != "" {
-			label.Key = op.NewLabel
+		if newLabel != "" {
+			label.Key = newLabel
 		}
 
 		labelValuesMapping := mtpOp.valueActionsMapping

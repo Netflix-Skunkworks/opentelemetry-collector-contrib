@@ -103,6 +103,8 @@ type Operation struct {
 	// REQUIRED
 	Action OperationAction `mapstructure:"action"`
 
+	LabelIncludeFilter FilterConfig `mapstructure:",squash"`
+
 	// Label identifies the exact label to operate on.
 	Label string `mapstructure:"label"`
 
