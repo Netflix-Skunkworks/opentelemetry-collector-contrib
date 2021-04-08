@@ -114,8 +114,8 @@ func validateConfiguration(config *Config) error {
 				return fmt.Errorf("operation %v: %q must be in %q", i+1, ActionFieldName, OperationActions)
 			}
 
-			if op.Action == UpdateLabel && op.Label == "" {
-				return fmt.Errorf("operation %v: missing required field %q while %q is %v", i+1, LabelFieldName, ActionFieldName, UpdateLabel)
+			if op.Action == UpdateLabel && op.Label == "" && op.LabelIncludeFilter.Include == ""{
+				return fmt.Errorf("operation %v: either \"label\" or \"include\" must be set while %q is %v", i+1, ActionFieldName, UpdateLabel)
 			}
 			if op.Action == AddLabel && op.NewLabel == "" {
 				return fmt.Errorf("operation %v: missing required field %q while %q is %v", i+1, NewLabelFieldName, ActionFieldName, AddLabel)
@@ -168,6 +168,13 @@ func buildHelperConfig(config *Config, version string) []internalTransform {
 			} else if op.Action == AggregateLabelValues {
 				mtpOp.aggregatedValuesSet = sliceToSet(op.AggregatedValues)
 			}
+
+			if op.Action == UpdateLabel {
+				if op.LabelIncludeFilter.Include != "" {
+					mtpOp.labelKeyRegex = regexp.MustCompile(op.LabelIncludeFilter.Include)
+				}
+			}
+
 			helperT.Operations[j] = mtpOp
 		}
 		helperDataTransforms[i] = helperT

@@ -49,6 +49,7 @@ type internalTransform struct {
 
 type internalOperation struct {
 	configOperation     Operation
+	labelKeyRegex       *regexp.Regexp
 	valueActionsMapping map[string]string
 	labelSetMap         map[string]bool
 	aggregatedValuesSet map[string]bool
