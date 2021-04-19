@@ -3,6 +3,7 @@ Description=OpenTelemety Contrib Collector
 After=network.target
 
 [Service]
+EnvironmentFile=/etc/profile.d/netflix_environment.sh
 ExecStart=/usr/bin/otelcontribcol --config /etc/otel-contrib-collector/config.yaml
 KillMode=mixed
 Restart=on-failure
