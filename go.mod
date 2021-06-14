@@ -46,8 +46,8 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/tcnksm/ghr v0.13.0
 	go.opentelemetry.io/collector v0.10.1-0.20200922190504-eb2127131b29
-	golang.org/x/sys v0.0.0-20200905004654-be1d3432aa8f
-	honnef.co/go/tools v0.0.1-2020.1.5
+	golang.org/x/sys v0.0.0-20210119212857-b64e53b001e4
+	honnef.co/go/tools v0.3.0-0.dev
 )
 
 // Replace references to modules that are in this repository with their relateive paths
