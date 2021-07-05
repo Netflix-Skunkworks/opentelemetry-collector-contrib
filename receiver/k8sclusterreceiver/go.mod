@@ -10,7 +10,7 @@ require (
 	go.opentelemetry.io/collector v0.10.1-0.20200922190504-eb2127131b29
 	go.uber.org/atomic v1.7.0
 	go.uber.org/zap v1.16.0
-	google.golang.org/protobuf v1.25.0
+	google.golang.org/protobuf v1.27.1
 	k8s.io/api v0.19.2
 	k8s.io/apimachinery v0.19.2
 	k8s.io/client-go v0.19.2
