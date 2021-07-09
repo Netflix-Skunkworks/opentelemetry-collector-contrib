@@ -83,7 +83,7 @@ func (e *spectatorExporter) getPodName(descriptor *metricspb.MetricDescriptor, s
 	labelKeys := descriptor.GetLabelKeys()
 	labelValues := series.GetLabelValues()
 	for i, key := range labelKeys {
-		if key.GetKey() == "pod" && labelValues[i].HasValue {
+		if key.GetKey() == "taskId" && labelValues[i].HasValue {
 			return labelValues[i].GetValue(), nil
 		}
 	}
