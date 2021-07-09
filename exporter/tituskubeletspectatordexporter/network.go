@@ -1,19 +1,13 @@
 package tituskubeletspectatordexporter
 
 import (
-	"io/ioutil"
 	"path"
 )
 
-// e.g. /var/lib/titus-environments/fe9298a0-1a0b-4cae-b292-5e5982e251db/netns
-const titusEnvironmentsPath = "/var/lib/titus-environments"
-const networkNamespaceFileName = "netns"
+// e.g. /var/lib/titus-inits/6ea18999-e06b-44ce-b9a5-f4ff55883680/ns/net
+const titusEnvironmentsPath = "/var/lib/titus-inits"
+const networkNamespaceFileName = "ns/net"
 
 func GetNetworkNamespacePath(podName string) (string, error) {
-	netNsPath := path.Join(titusEnvironmentsPath, podName, networkNamespaceFileName)
-	if content, err := ioutil.ReadFile(netNsPath); err != nil {
-		return "", err
-	} else {
-		return string(content), nil
-	}
+	return path.Join(titusEnvironmentsPath, podName, networkNamespaceFileName), nil
 }
